@@ -47,3 +47,7 @@ chmod 755 ./keepalive.sh
 ```
 
 Schedule a recurring job with cron to launch the script within the timeout window.  If ICMP isn't allowed, the NMAP arguments can be modified to connect to other TCP ports such as port 22 or 3389.
+
+# Container Networking
+
+This script uses Docker's "macvlan" network plugin which will create a new mac address for every container and bind it to the sub-interface.  That means that ever time the script is run, the static IP assigned to the container for a specific VLAN will be created with a new MAC address.  This shouldn't be an issue as this script is designed to run periodically and infrequently.  Docker has an alternative network plugin called "ipvlan" but it is only available when running Docker in "experimental" mode (at the time of publishing).  The "ipvlan" plugin will make it so that every time a container is spun up in a specific VLAN, it inherits the MAC address of the OS interface.  Since this script leverages statically assigned IPs, that means every time it is run, the same MAC/IP combinations will be created.  While "macvlan" is generally recommended when using Docker, "ipvlan" may be more appropriate for this use case.  Since it is an experimental feature, though, it is not used.
