@@ -37,7 +37,7 @@ The script runs containers sequentially, but could be altered to run the contain
 
 Example:
 ```
-docker run --rm \
+docker run -d --rm \
 ```
 
 After loading the script.  Execute it by changing the file permissions to make it executable and launch.
