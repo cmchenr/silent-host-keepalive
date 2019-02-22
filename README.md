@@ -2,7 +2,7 @@
 
 Some network technologies require seeing traffic from a host to learn a MAC or IP address.  In data centers, hosts may be silent and consequently learned MAC/IP's may timeout.  This script is designed to ping sweep a large number of VLANs in an environment from a single VM on a periodic basis in order to continuously see traffic from silent hosts.
 
-# Dependencies
+## Dependencies
 
 This script is desinged to run on CentOS/RHEL virtual machine.  That machine must have a single virtual NIC attached port-group that supports 802.1q tagging and can carry all of the VLANs that the script needs to generate traffic for.  Docker must be installed.
 
@@ -13,7 +13,7 @@ docker pull uzyexe/nmap
 
 After loading the required software, the OS does not need to have an IP address attached to any interfaces, and it is recommended that all IP addresses be removed.
 
-# Usage
+## Usage
 
 Create the 2 required configuration files:
 
@@ -48,6 +48,6 @@ chmod 755 ./keepalive.sh
 
 Schedule a recurring job with cron to launch the script within the timeout window.  If ICMP isn't allowed, the NMAP arguments can be modified to connect to other TCP ports such as port 22 or 3389.
 
-# Container Networking
+## Container Networking
 
 This script uses Docker's "macvlan" network plugin which will create a new mac address for every container and bind it to the sub-interface.  That means that ever time the script is run, the static IP assigned to the container for a specific VLAN will be created with a new MAC address.  This shouldn't be an issue as this script is designed to run periodically and infrequently.  Docker has an alternative network plugin called "ipvlan" but it is only available when running Docker in "experimental" mode (at the time of publishing).  The "ipvlan" plugin will make it so that every time a container is spun up in a specific VLAN, it inherits the MAC address of the OS interface.  With "ipvlan" the script would instead create the same MAC/IP combinations every time it is run.  While "macvlan" is generally recommended when using Docker, "ipvlan" may be more appropriate for this use case.  Since it is an experimental feature, though, it is not used.
