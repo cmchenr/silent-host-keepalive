@@ -20,7 +20,7 @@ echo $INTERFACE
 #Ensure parent interface is up
 ip link set dev $INTERFACE up
 while read -r vlan subnet gateway address; do
-    # Create Docker Network interface attached to the VLAN subinterface
+    # Create Docker MACVLAN network interface for VLAN
     docker network rm vlan$vlan
 	docker network create -d macvlan \
     --subnet=$subnet \
