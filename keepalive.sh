@@ -17,16 +17,17 @@
 
 source interface.conf
 echo $INTERFACE
+#Ensure parent interface is up
+ip link set dev $INTERFACE up
 while read -r vlan subnet gateway address; do
-    #Create VLAN sub-interface
-	ip link add link $INTERFACE name $INTERFACE.$vlan type vlan id $vlan
-	ip link set dev $INTERFACE.$vlan up
-    #Create Docker Network interface attached to the VLAN subinterface
+    # Create Docker Network interface attached to the VLAN subinterface
     docker network rm vlan$vlan
 	docker network create -d macvlan \
     --subnet=$subnet \
     --gateway=$gateway \
     -o parent=$INTERFACE.$vlan vlan$vlan
+    # Sleep for half a second to ensure docker network interface is created before creating the container
+    sleep 1
     # Run Docker NMAP container to ping sweep local subnet from the VLAN subinterface
 	docker run --rm \
     --net=vlan$vlan \
